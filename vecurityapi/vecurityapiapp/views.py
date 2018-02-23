@@ -9,6 +9,7 @@ from rest_framework import status
 from django.http import Http404
 from django.utils.six import BytesIO
 from rest_framework.parsers import JSONParser
+import pickle
 
 
 # When using functions/methods as views
@@ -61,7 +62,7 @@ def car_owner_detail(request, pk, format=None):
 # Using classes as views
 class CarOwnerList(APIView):
     """
-    List all cars, or create a new car.
+    List all car owners, or create a new car owner.
     """
 
     def get(self, request, format=None):
@@ -73,8 +74,25 @@ class CarOwnerList(APIView):
         serializer = CarOwnerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            res = {
+                'msg': 'signup successful',
+                'error': 0,
+                'success': 1,
+                'id': serializer.data['id']
+            }
+            response = pickle.dumps(res)
+            jsonresp = pickle.loads(response)
+            return Response(jsonresp, status=status.HTTP_201_CREATED)
+        else:
+            res = {
+                'msg': 'signup unsuccessful',
+                'error': 1,
+                'success': 0,
+                'id': 0
+            }
+            response = pickle.dumps(res)
+            jsonresp = pickle.loads(response)
+            return Response(jsonresp, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CarOwnerDetail(APIView):
@@ -181,7 +199,39 @@ class OwnerCars(APIView):
         return Response(serializer.data)
 
 
-"""
 class CarOwnerLogin(APIView):
     def post(self, request, format=None):
-    """
+        email = request.data['email']
+        password = request.data['password']
+        if email and password:
+            user = CarOwner.objects.filter(email=email).filter(password=password)
+            if user.exists():
+                res = {
+                    'msg': 'Login successful',
+                    'error': 0,
+                    'success': 1,
+                    'id': user[0].id
+                }
+                response = pickle.dumps(res)
+                jsonresp = pickle.loads(response)
+                return Response(jsonresp, status=status.HTTP_200_OK)
+            else:
+                res = {
+                    'msg': 'Login unsuccessful',
+                    'error': 1,
+                    'success': 0,
+                    'id': 0
+                }
+                response = pickle.dumps(res)
+                jsonresp = pickle.loads(response)
+                return Response(jsonresp, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            res = {
+                'msg': 'No credentials found',
+                'error': 2,
+                'success': 0,
+                'id': 0
+            }
+            response = pickle.dumps(res)
+            jsonresp = pickle.loads(response)
+            return Response(jsonresp, status=status.HTTP_400_BAD_REQUEST)

@@ -6,7 +6,7 @@ import json
 
 
 class CarOwnerSerializer(serializers.ModelSerializer):
-    #cars = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # cars = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = CarOwner
@@ -43,3 +43,4 @@ class AddCarSerializer(serializers.Serializer):
     car_owner_id = serializers.IntegerField()
     license_number = serializers.CharField(required=True, max_length=100)
     color = serializers.CharField(required=True, max_length=10)
+

@@ -46,3 +46,29 @@ class Car(models.Model):
 
     def __str__(self):
         return self.license_number
+
+
+class Guard(models.Model):
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+    phone = models.CharField(max_length=200)
+    account_number = models.CharField(max_length=200)
+    account_name = models.CharField(max_length=200)
+    nin = models.CharField(max_length=200)
+    dob = models.DateField('date of birth')
+    gender = models.CharField(max_length=200)
+    profile_photo = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    created_at = models.DateTimeField('date created', editable=False)
+    updated_at = models.DateTimeField('date updated')
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_at = timezone.now()
+        self.updated_at = timezone.now()
+        return super(Guard, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.first_name

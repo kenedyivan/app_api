@@ -1,8 +1,17 @@
 from django.http import HttpResponse, JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
-from vecurityapiapp.models import CarOwner, Car
-from vecurityapiapp.serializers import CarOwnerSerializer, CarSerializer, AddCarSerializer
+from vecurityapiapp.models import (
+    CarOwner,
+    Car,
+    Guard
+)
+from vecurityapiapp.serializers import (
+    CarOwnerSerializer,
+    CarSerializer,
+    AddCarSerializer,
+    GuardSerializer
+)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -205,6 +214,44 @@ class CarOwnerLogin(APIView):
         password = request.data['password']
         if email and password:
             user = CarOwner.objects.filter(email=email).filter(password=password)
+            if user.exists():
+                res = {
+                    'msg': 'Login successful',
+                    'error': 0,
+                    'success': 1,
+                    'id': user[0].id
+                }
+                response = pickle.dumps(res)
+                jsonresp = pickle.loads(response)
+                return Response(jsonresp, status=status.HTTP_200_OK)
+            else:
+                res = {
+                    'msg': 'Login unsuccessful',
+                    'error': 1,
+                    'success': 0,
+                    'id': 0
+                }
+                response = pickle.dumps(res)
+                jsonresp = pickle.loads(response)
+                return Response(jsonresp, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            res = {
+                'msg': 'No credentials found',
+                'error': 2,
+                'success': 0,
+                'id': 0
+            }
+            response = pickle.dumps(res)
+            jsonresp = pickle.loads(response)
+            return Response(jsonresp, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GuardLogin(APIView):
+    def post(self, request, format=None):
+        email = request.data['email']
+        password = request.data['password']
+        if email and password:
+            user = Guard.objects.filter(email=email).filter(password=password)
             if user.exists():
                 res = {
                     'msg': 'Login successful',

@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from vecurityapiapp.models import CarOwner, Car
-from django.utils.six import BytesIO
-from rest_framework.parsers import JSONParser
-import json
+from vecurityapiapp.models import (
+    CarOwner,
+    Car,
+    Guard
+)
 
 
 class CarOwnerSerializer(serializers.ModelSerializer):
@@ -44,3 +45,15 @@ class AddCarSerializer(serializers.Serializer):
     license_number = serializers.CharField(required=True, max_length=100)
     color = serializers.CharField(required=True, max_length=10)
 
+
+class GuardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Guard
+        fields = ('id',
+                  'first_name',
+                  'last_name',
+                  'phone',
+                  'email',
+                  'account_number',
+                  'account_name'
+                  )

@@ -12,6 +12,7 @@ urlpatterns = [
     re_path(r'^addcar/$', views.AddCar.as_view()),
     re_path(r'^ownercars/(?P<oid>[0-9]+)/$', views.OwnerCars.as_view()),
     re_path(r'^login/$', views.CarOwnerLogin.as_view()),
+    re_path(r'^guard-login/$', views.GuardLogin.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
